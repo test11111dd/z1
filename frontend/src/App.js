@@ -669,18 +669,17 @@ const MainContent = () => {
 
   const [quote, setQuote] = useState(null);
 
-  // AI Chatbot state
+  // AI Chatbot state - Updated for new functionality
   const [showChatbot, setShowChatbot] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [chatbotData, setChatbotData] = useState({
-    hasHardwareWallet: null,
-    revokedPermissions: null,
-    stablecoinPercentage: 50,
-    additionalDiscounts: 0
+  const [userInfo, setUserInfo] = useState({
+    name: '',
+    email: '',
+    phone: ''
   });
-  const [optimizedQuote, setOptimizedQuote] = useState(null);
+  const [userInfoCollected, setUserInfoCollected] = useState(false);
+  const [currentMessage, setCurrentMessage] = useState('');
 
   // Contact form state
   const [contactForm, setContactForm] = useState({
