@@ -348,9 +348,7 @@ metadata:
 
 test_plan:
   current_focus:
-    - "AI Chatbot Risk Assessment Feature"
-    - "Test premium optimization calculations"
-    - "Verify mobile responsiveness of chatbot widget"
+    - "AI Chat Endpoint Implementation"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
