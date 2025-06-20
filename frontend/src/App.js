@@ -1765,7 +1765,7 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* AI Risk Advisor - Redesigned for Speed & Intuition */}
+      {/* Lower My Premium – AI Quick Check */}
       {showChatbot && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="w-full max-w-md bg-gradient-to-br from-slate-900 to-blue-900 rounded-2xl shadow-2xl border border-blue-500/50 overflow-hidden">
@@ -1780,38 +1780,60 @@ const MainContent = () => {
               <div className="w-16 h-16 mx-auto mb-3 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
                 <span className="text-3xl">🤖</span>
               </div>
-              <h2 className="text-xl font-bold text-white">AI Risk Advisor</h2>
-              <p className="text-blue-100 text-sm">Get instant savings on your premium</p>
+              <h2 className="text-xl font-bold text-white">Lower My Premium – AI Quick Check</h2>
+              <p className="text-blue-100 text-sm">Personalized insurance recommendations</p>
             </div>
 
             {/* Content */}
             <div className="p-6 max-h-96 overflow-y-auto">
-              {chatMessages.length === 0 ? (
-                // Quick Start Options
+              {!userInfoCollected ? (
+                // User Info Collection
                 <div className="space-y-4">
                   <div className="text-center mb-6">
-                    <h3 className="text-white font-semibold mb-2">Quick Security Check</h3>
-                    <p className="text-blue-300 text-sm">Answer 3 questions to unlock up to 60% savings</p>
+                    <h3 className="text-white font-semibold mb-2">Get Started</h3>
+                    <p className="text-blue-300 text-sm">Please provide your information to receive personalized recommendations</p>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="bg-slate-800/50 p-4 rounded-lg border border-blue-600/30">
-                      <h4 className="text-white font-medium mb-3">Do you use a hardware wallet?</h4>
-                      <div className="flex space-x-2">
-                        <button 
-                          onClick={() => handleChatbotAnswer('hardware_wallet', true)}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
-                        >
-                          ✅ Yes (-40%)
-                        </button>
-                        <button 
-                          onClick={() => handleChatbotAnswer('hardware_wallet', false)}
-                          className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-3 rounded-lg font-semibold transition-all"
-                        >
-                          ❌ No
-                        </button>
-                      </div>
+                    <div>
+                      <label className="block text-white text-sm font-medium mb-1">Name *</label>
+                      <input
+                        type="text"
+                        placeholder="Enter your full name"
+                        className="w-full bg-slate-700 text-white p-3 rounded-lg border border-blue-600 focus:border-blue-400 focus:outline-none"
+                        value={userInfo.name}
+                        onChange={(e) => setUserInfo(prev => ({...prev, name: e.target.value}))}
+                      />
                     </div>
+                    
+                    <div>
+                      <label className="block text-white text-sm font-medium mb-1">Email *</label>
+                      <input
+                        type="email"
+                        placeholder="Enter your email address"
+                        className="w-full bg-slate-700 text-white p-3 rounded-lg border border-blue-600 focus:border-blue-400 focus:outline-none"
+                        value={userInfo.email}
+                        onChange={(e) => setUserInfo(prev => ({...prev, email: e.target.value}))}
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-white text-sm font-medium mb-1">Phone *</label>
+                      <input
+                        type="tel"
+                        placeholder="Enter your phone number"
+                        className="w-full bg-slate-700 text-white p-3 rounded-lg border border-blue-600 focus:border-blue-400 focus:outline-none"
+                        value={userInfo.phone}
+                        onChange={(e) => setUserInfo(prev => ({...prev, phone: e.target.value}))}
+                      />
+                    </div>
+                    
+                    <button 
+                      onClick={collectUserInfo}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-colors"
+                    >
+                      Start Chat
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -1826,61 +1848,14 @@ const MainContent = () => {
                       }`}>
                         <div className="text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</div>
                         
-                        {/* Quick Answer Buttons */}
-                        {msg.type === 'bot' && msg.questionType === 'boolean' && (
-                          <div className="flex space-x-2 mt-4">
-                            <button 
-                              onClick={() => handleChatbotAnswer(msg.questionId, true)}
-                              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg font-semibold transition-all transform hover:scale-105"
-                            >
-                              ✅ Yes
-                            </button>
-                            <button 
-                              onClick={() => handleChatbotAnswer(msg.questionId, false)}
-                              className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded-lg font-semibold transition-all"
-                            >
-                              ❌ No
-                            </button>
+                        {/* Show recommendations if available */}
+                        {msg.recommendations && msg.recommendations.length > 0 && (
+                          <div className="mt-3 pt-2 border-t border-blue-600/30">
+                            <div className="text-xs text-blue-300 mb-2">💡 Recommendations:</div>
+                            {msg.recommendations.map((rec, idx) => (
+                              <div key={idx} className="text-xs text-green-300 mb-1">• {rec}</div>
+                            ))}
                           </div>
-                        )}
-
-                        {/* Enhanced Slider */}
-                        {msg.type === 'bot' && msg.questionType === 'slider' && (
-                          <div className="mt-4 space-y-3">
-                            <div className="bg-slate-700 p-4 rounded-lg">
-                              <div className="flex justify-between text-xs text-gray-300 mb-2">
-                                <span>0%</span>
-                                <span>50%</span>
-                                <span>100%</span>
-                              </div>
-                              <input 
-                                type="range"
-                                min="0"
-                                max="100"
-                                defaultValue="50"
-                                className="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer slider"
-                                onChange={(e) => {
-                                  const value = parseInt(e.target.value);
-                                  e.target.parentElement.nextElementSibling.querySelector('.percentage').textContent = `${value}%`;
-                                }}
-                                onMouseUp={(e) => handleChatbotAnswer(msg.questionId, parseInt(e.target.value))}
-                              />
-                              <div className="text-center mt-2">
-                                <span className="percentage text-blue-300 font-semibold">50%</span>
-                                <span className="text-gray-400 text-sm ml-1">stablecoins</span>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Success Button */}
-                        {msg.type === 'bot' && msg.showAcceptButton && (
-                          <button 
-                            onClick={acceptOptimizedRate}
-                            className="w-full mt-4 bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3 px-6 rounded-lg font-bold text-center transition-all transform hover:scale-105 shadow-lg"
-                          >
-                            🎉 Accept Better Rate
-                          </button>
                         )}
                       </div>
                     </div>
@@ -1901,23 +1876,28 @@ const MainContent = () => {
               )}
             </div>
 
-            {/* Quick Actions Footer */}
-            <div className="border-t border-slate-700 p-4 bg-slate-800/50">
-              <div className="grid grid-cols-2 gap-2">
-                <button 
-                  onClick={() => handleFAQ("What's covered?")}
-                  className="bg-slate-700 hover:bg-slate-600 text-white text-sm py-2 px-3 rounded-lg transition-all"
-                >
-                  📋 Coverage
-                </button>
-                <button 
-                  onClick={() => handleFAQ("How fast are payouts?")}
-                  className="bg-slate-700 hover:bg-slate-600 text-white text-sm py-2 px-3 rounded-lg transition-all"
-                >
-                  ⚡ Speed
-                </button>
+            {/* Input Field - Only show after user info is collected */}
+            {userInfoCollected && (
+              <div className="border-t border-slate-700 p-4 bg-slate-800/50">
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    placeholder="Type your message..."
+                    className="flex-1 bg-slate-700 text-white p-3 rounded-lg border border-blue-600 focus:border-blue-400 focus:outline-none"
+                    value={currentMessage}
+                    onChange={(e) => setCurrentMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                  />
+                  <button 
+                    onClick={sendMessage}
+                    disabled={!currentMessage.trim() || isTyping}
+                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-slate-600 text-white px-4 py-3 rounded-lg transition-colors"
+                  >
+                    📤
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
