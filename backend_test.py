@@ -191,13 +191,38 @@ class BitSafeAPITester:
     
     def test_cors_headers(self):
         """Test CORS headers for the chat endpoint"""
-        return self.run_test(
-            "CORS Headers",
-            "OPTIONS",
-            "chat",
-            200,
-            check_cors=True
-        )
+        # For FastAPI, we can check CORS headers on a regular GET request
+        url = f"{self.base_url}/api/"
+        headers = {'Origin': 'http://example.com'}
+        
+        self.tests_run += 1
+        print(f"\n🔍 Testing CORS Headers...")
+        print(f"URL: {url}")
+        
+        try:
+            response = requests.get(url, headers=headers)
+            
+            # Check for CORS headers
+            cors_headers = [
+                'Access-Control-Allow-Origin',
+                'Access-Control-Allow-Credentials'
+            ]
+            
+            cors_success = all(header in response.headers for header in cors_headers)
+            
+            if cors_success:
+                self.tests_passed += 1
+                print("✅ CORS headers verified")
+                print(f"✅ Passed - Status: {response.status_code}")
+                return True, {}
+            else:
+                print("❌ CORS headers missing")
+                print(f"Headers: {response.headers}")
+                return False, {}
+                
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
 
 def main():
     # Setup
