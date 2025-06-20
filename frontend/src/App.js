@@ -1139,7 +1139,7 @@ const MainContent = () => {
                       {/* Content */}
                       <div className="relative flex items-center space-x-2">
                         <span className="text-2xl animate-pulse">🤖</span>
-                        <span>AI Risk Advisor</span>
+                        <span>Lower My Premium – AI Quick Check</span>
                         <span className="bg-white/20 px-2 py-1 rounded-full text-xs">-60%</span>
                       </div>
                       
