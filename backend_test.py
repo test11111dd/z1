@@ -5,8 +5,12 @@ import os
 from dotenv import load_dotenv
 
 class BitSafeAPITester:
-    def __init__(self, base_url="https://5eb037bd-b6b6-4195-9970-5b9c4d4515c9.preview.emergentagent.com"):
-        self.base_url = base_url
+    def __init__(self):
+        # Try to get the backend URL from the frontend .env file
+        load_dotenv("frontend/.env")
+        self.base_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+        print(f"Using backend URL: {self.base_url}")
+        
         self.tests_run = 0
         self.tests_passed = 0
         
@@ -20,6 +24,7 @@ class BitSafeAPITester:
         
         self.tests_run += 1
         print(f"\n🔍 Testing {name}...")
+        print(f"URL: {url}")
         
         try:
             if method == 'GET':
