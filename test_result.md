@@ -289,11 +289,14 @@ frontend:
     file: "frontend/src/App.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
         - working: true
           agent: "main"
           comment: "Successfully implemented AI chatbot feature for premium optimization. Added 'Lower Your Premium' button that opens floating chat widget. Chatbot asks 3 key risk assessment questions: hardware wallet usage (40% discount), DeFi permissions revoked (15% discount), and stablecoin percentage (up to 10% discount). Includes FAQ responses for 'What's covered?' and 'How to file a claim?'. Mobile-friendly responsive design with typing indicators and interactive elements. Simulated Google Sheets data logging for underwriting team."
+        - working: true
+          agent: "testing"
+          comment: "Tested the new /api/chat endpoint with comprehensive backend_test.py. All tests passed successfully. The endpoint accepts the required JSON payload with user_info (name, email, phone) and message. Error handling for missing HF API key works correctly with fallback responses. Database storage of chat messages and AI responses verified. CORS headers are properly configured for frontend integration. The endpoint returns proper ChatResponse format with response and recommendations fields."
 
   - task: "Configure EmailJS contact form with proper credentials"
     implemented: true
