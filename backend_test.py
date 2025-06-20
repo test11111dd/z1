@@ -6,9 +6,8 @@ from dotenv import load_dotenv
 
 class BitSafeAPITester:
     def __init__(self):
-        # Try to get the backend URL from the frontend .env file
-        load_dotenv("frontend/.env")
-        self.base_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+        # Use the local URL for testing
+        self.base_url = 'http://localhost:8001'
         print(f"Using backend URL: {self.base_url}")
         
         self.tests_run = 0
