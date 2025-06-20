@@ -3,6 +3,8 @@ import sys
 import json
 import os
 from dotenv import load_dotenv
+from pymongo import MongoClient
+import time
 
 class BitSafeAPITester:
     def __init__(self):
@@ -15,6 +17,12 @@ class BitSafeAPITester:
         
         # Load environment variables from backend/.env
         load_dotenv("backend/.env")
+        
+        # Connect to MongoDB for database verification
+        self.mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+        self.db_name = os.environ.get('DB_NAME', 'test_database')
+        self.mongo_client = MongoClient(self.mongo_url)
+        self.db = self.mongo_client[self.db_name]
 
     def run_test(self, name, method, endpoint, expected_status, data=None, check_cors=False):
         """Run a single API test"""
@@ -223,6 +231,63 @@ class BitSafeAPITester:
         except Exception as e:
             print(f"❌ Failed - Error: {str(e)}")
             return False, {}
+    
+    def test_database_storage(self):
+        """Test that chat messages and AI responses are stored in the database"""
+        self.tests_run += 1
+        print(f"\n🔍 Testing Database Storage...")
+        
+        # Generate a unique message to identify in the database
+        unique_message = f"Test database storage {time.time()}"
+        test_payload = {
+            "message": unique_message,
+            "user_info": {
+                "name": "DB Tester",
+                "email": "db@example.com", 
+                "phone": "+1555555555"
+            }
+        }
+        
+        # Send the chat message
+        url = f"{self.base_url}/api/chat"
+        headers = {'Content-Type': 'application/json'}
+        
+        try:
+            # Send the request
+            response = requests.post(url, json=test_payload, headers=headers)
+            
+            if response.status_code != 200:
+                print(f"❌ Failed - Chat request failed with status {response.status_code}")
+                return False, {}
+            
+            # Give the database a moment to process the request
+            time.sleep(1)
+            
+            # Check if the message was stored in the database
+            chat_message = self.db.chat_messages.find_one({"message": unique_message})
+            
+            if not chat_message:
+                print("❌ Failed - Chat message not found in database")
+                return False, {}
+            
+            print("✅ Chat message found in database")
+            
+            # Check if the AI response was stored
+            ai_response = self.db.ai_responses.find_one({"user_id": chat_message["id"]})
+            
+            if not ai_response:
+                print("❌ Failed - AI response not found in database")
+                return False, {}
+            
+            print("✅ AI response found in database")
+            print(f"✅ Database storage test passed")
+            
+            self.tests_passed += 1
+            return True, {}
+            
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            return False, {}
 
 def main():
     # Setup
@@ -240,6 +305,7 @@ def main():
     chat_format_success, _ = tester.test_chat_response_format()
     chat_error_success, _ = tester.test_chat_error_handling()
     cors_success, _ = tester.test_cors_headers()
+    db_success, _ = tester.test_database_storage()
     
     # Print results
     print(f"\n📊 Tests passed: {tester.tests_passed}/{tester.tests_run}")
